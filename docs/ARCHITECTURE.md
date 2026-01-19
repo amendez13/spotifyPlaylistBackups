@@ -11,6 +11,10 @@ spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uplo
 ### Component Diagram
 
 ```
+┌──────────────────┐
+│  CLI (Typer)     │
+└────────┬─────────┘
+         ▼
 ┌────────────────────┐     ┌──────────────────────┐
 │  Config Settings   │────▶│    Backup Service    │
 └────────────────────┘     └──────────┬───────────┘
@@ -67,16 +71,34 @@ spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uplo
 **Key Files**:
 - `src/backup/service.py`
 
+### CLI Entry Point
+
+**Purpose**: Provide the user-facing command interface.
+
+**Responsibilities**:
+- Parse global flags like `--config`, `--verbose`, and `--dry-run`
+- Load settings and configure logging
+- Trigger OAuth flows for Spotify and Dropbox
+- Dispatch backup, sync, list, and status commands
+
 **Key Files**:
-- `src/component_b.py`
+- `src/main.py`
 
 ## Data Flow
 
-1. Load settings via `load_settings()`.
-2. Create `SpotifyClient` and `DropboxClient`.
-3. `BackupService` fetches playlists and tracks.
-4. `CSVExporter` generates per-playlist CSV output.
-5. Dropbox client uploads the CSV into the backup folder.
+1. CLI command resolves settings and logging configuration.
+2. Load settings via `load_settings()`.
+3. Create `SpotifyClient` and `DropboxClient`.
+4. `BackupService` fetches playlists and tracks.
+5. `CSVExporter` generates per-playlist CSV output.
+6. Dropbox client uploads the CSV into the backup folder.
+
+### CLI Workflow
+
+1. CLI parses command-line arguments and options.
+2. `--config` overrides the YAML path via `SPOTIFY_BACKUPS_CONFIG_PATH`.
+3. The CLI constructs clients and `BackupService`.
+4. Commands emit colored status output and handle errors.
 
 ### Sync Workflow
 
@@ -105,6 +127,15 @@ print(result.successful, result.failed)
 
 sync_result = service.sync_all_playlists()
 print(sync_result.playlists_updated, sync_result.total_new_tracks)
+```
+
+### CLI Example
+
+```bash
+spotify-backup auth spotify
+spotify-backup auth dropbox
+spotify-backup backup
+spotify-backup sync
 ```
 
 ## Design Decisions

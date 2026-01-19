@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 import time
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, Callable, List, Optional, TypeVar, cast
 
 import dropbox
@@ -145,6 +147,29 @@ class DropboxClient:
                 files.append(path_display)
         return files
 
+    def list_file_metadata(self, folder: str) -> List["DropboxFileInfo"]:
+        """List file metadata in a folder."""
+        dropbox_folder = _normalize_path(folder)
+        try:
+            result = self._request_with_retry(self._client.files_list_folder, dropbox_folder)
+        except ApiError as exc:
+            if _is_not_found(exc.error):
+                return []
+            raise RuntimeError(f"Dropbox list failed for {dropbox_folder}") from exc
+
+        entries = list(result.entries)
+        while result.has_more:
+            result = self._request_with_retry(self._client.files_list_folder_continue, result.cursor)
+            entries.extend(result.entries)
+
+        files: List[DropboxFileInfo] = []
+        for entry in entries:
+            path_display = getattr(entry, "path_display", None)
+            server_modified = getattr(entry, "server_modified", None)
+            if path_display and isinstance(server_modified, datetime):
+                files.append(DropboxFileInfo(path=path_display, server_modified=server_modified))
+        return files
+
     def ensure_folder_exists(self, path: str) -> None:
         """Create folder if it doesn't exist."""
         dropbox_path = _normalize_path(path)
@@ -156,3 +181,9 @@ class DropboxClient:
             if _is_conflict(exc.error):
                 return
             raise RuntimeError(f"Dropbox folder creation failed for {dropbox_path}") from exc
+
+
+@dataclass(frozen=True)
+class DropboxFileInfo:
+    path: str
+    server_modified: datetime
