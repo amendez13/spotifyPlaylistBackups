@@ -71,18 +71,22 @@ python -m src.main --help
 The main configuration file. See `config/config.example.yaml` for all available options.
 
 ```yaml
-# Application settings
-app:
-  debug: false
-  log_level: INFO
-
 spotify:
   client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
   client_secret: REPLACE_WITH_SPOTIFY_CLIENT_SECRET
   redirect_uri: http://localhost:8888/callback
 
 dropbox:
-  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
+  app_key: REPLACE_WITH_DROPBOX_APP_KEY
+  app_secret: REPLACE_WITH_DROPBOX_APP_SECRET
+  # refresh_token: REPLACE_WITH_DROPBOX_REFRESH_TOKEN
+
+backup:
+  folder: /spotify-backups
+  csv_delimiter: ","
+
+tokens:
+  storage_path: config/tokens.json
 ```
 
 ### Environment Variables
@@ -91,8 +95,16 @@ You can also configure the application using environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `APP_DEBUG` | Enable debug mode | `false` |
-| `APP_LOG_LEVEL` | Logging level | `INFO` |
+| `SPOTIFY_CLIENT_ID` | Spotify client ID | required |
+| `SPOTIFY_CLIENT_SECRET` | Spotify client secret | required |
+| `SPOTIFY_REDIRECT_URI` | Spotify redirect URI | `http://localhost:8888/callback` |
+| `DROPBOX_APP_KEY` | Dropbox app key | required |
+| `DROPBOX_APP_SECRET` | Dropbox app secret | required |
+| `DROPBOX_REFRESH_TOKEN` | Dropbox refresh token | empty |
+| `BACKUP_FOLDER` | Remote backup folder | `/spotify-backups` |
+| `CSV_DELIMITER` | CSV delimiter | `,` |
+| `TOKEN_STORAGE_PATH` | Token cache path | `config/tokens.json` |
+| `SPOTIFY_BACKUPS_CONFIG_PATH` | Path to config YAML | `config/config.yaml` |
 
 ## Development Setup
 
