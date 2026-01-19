@@ -1,50 +1,37 @@
-"""Tests for the main module."""
+"""Tests for the CLI entry point."""
 
-from src.main import greet, main
+import sys
 
+import pytest
+from typer.testing import CliRunner
 
-class TestGreet:
-    """Tests for the greet function."""
-
-    def test_greet_default(self) -> None:
-        """Test greeting with default name."""
-        result = greet()
-        assert result == "Hello, World!"
-
-    def test_greet_with_name(self) -> None:
-        """Test greeting with a specific name."""
-        result = greet("Alice")
-        assert result == "Hello, Alice!"
-
-    def test_greet_with_none(self) -> None:
-        """Test greeting with None explicitly passed."""
-        result = greet(None)
-        assert result == "Hello, World!"
-
-    def test_greet_with_empty_string(self) -> None:
-        """Test greeting with empty string."""
-        result = greet("")
-        assert result == "Hello, !"
+from src.main import APP_HELP, app, main
 
 
-class TestSampleData:
-    """Tests demonstrating fixture usage."""
+class TestCli:
+    """Tests for the Typer CLI."""
 
-    def test_sample_data_has_key(self, sample_data: dict) -> None:
-        """Test that sample_data fixture has expected key."""
-        assert "key" in sample_data
-        assert sample_data["key"] == "value"
+    def test_cli_help_includes_description(self) -> None:
+        """Ensure the CLI help text shows the app description."""
+        runner = CliRunner()
+        result = runner.invoke(app, ["--help"])
+        assert result.exit_code == 0
+        assert APP_HELP in result.output
 
-    def test_sample_data_has_number(self, sample_data: dict) -> None:
-        """Test that sample_data fixture has expected number."""
-        assert sample_data["number"] == 42
+    def test_info_command_output(self) -> None:
+        """Ensure the info command outputs the placeholder message."""
+        runner = CliRunner()
+        result = runner.invoke(app, ["info"])
+        assert result.exit_code == 0
+        assert "under construction" in result.output
 
 
 class TestMain:
-    """Tests for the main function."""
+    """Tests for the module entry point."""
 
-    def test_main_prints_greeting(self, capsys: object) -> None:
-        """Test that main() prints the default greeting."""
-        main()
-        captured = capsys.readouterr()  # type: ignore[attr-defined]
-        assert captured.out == "Hello, World!\n"
+    def test_main_runs_cli_help(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """Ensure main() forwards to the CLI."""
+        monkeypatch.setattr(sys, "argv", ["main", "--help"])
+        with pytest.raises(SystemExit) as exc_info:
+            main()
+        assert exc_info.value.code == 0

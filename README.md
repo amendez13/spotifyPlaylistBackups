@@ -8,9 +8,9 @@ Backup and export Spotify playlists to JSON
 
 ## Features
 
-- Feature 1: Description
-- Feature 2: Description
-- Feature 3: Description
+- Typer-based CLI scaffold
+- YAML configuration template for Spotify and Dropbox credentials
+- Test and quality tooling wired into CI
 
 ## Quick Start
 
@@ -49,7 +49,10 @@ cp config/config.example.yaml config/config.yaml
 
 ```bash
 # Run the application
-python -m src.main
+python -m src.main --help
+
+# Placeholder command
+python -m src.main info
 ```
 
 ## Configuration
@@ -62,7 +65,13 @@ app:
   debug: false
   log_level: INFO
 
-# Add your configuration sections here
+spotify:
+  client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
+  client_secret: REPLACE_WITH_SPOTIFY_CLIENT_SECRET
+  redirect_uri: http://localhost:8888/callback
+
+dropbox:
+  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
 ```
 
 ## Project Structure
@@ -73,8 +82,12 @@ spotifyPlaylistBackups/
 ├── .claude/              # Claude Code configuration
 ├── config/               # Configuration files
 ├── docs/                 # Documentation
-├── src/       # Source code
-├── tests/         # Test files
+├── src/                  # Source code
+│   ├── backup/           # Backup logic (placeholder)
+│   ├── config/           # Settings and config helpers (placeholder)
+│   ├── dropbox/          # Dropbox integration (placeholder)
+│   └── spotify/          # Spotify integration (placeholder)
+├── tests/                # Test files
 ├── CLAUDE.md             # AI assistant guidance
 ├── README.md             # This file
 ├── pyproject.toml        # Tool configuration

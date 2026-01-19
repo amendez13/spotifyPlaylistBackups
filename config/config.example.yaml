@@ -30,6 +30,20 @@ app:
 #   api_key: REPLACE_WITH_YOUR_API_KEY
 #   timeout: 30
 
+# Spotify API credentials
+spotify:
+  client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
+  client_secret: REPLACE_WITH_SPOTIFY_CLIENT_SECRET
+  redirect_uri: http://localhost:8888/callback
+  # Optional override of OAuth scopes
+  # scopes:
+  #   - playlist-read-private
+  #   - playlist-read-collaborative
+
+# Dropbox API credentials
+dropbox:
+  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
+
 # Processing settings
 processing:
   # Maximum concurrent operations
