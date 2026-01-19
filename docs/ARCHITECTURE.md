@@ -78,6 +78,13 @@ spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uplo
 4. `CSVExporter` generates per-playlist CSV output.
 5. Dropbox client uploads the CSV into the backup folder.
 
+### Sync Workflow
+
+1. Fetch current playlist data from Spotify.
+2. Download existing CSV from Dropbox (if present).
+3. Parse existing track ids and detect new tracks.
+4. Append new rows and upload the updated CSV.
+
 ### Usage Example
 
 ```python
@@ -95,6 +102,9 @@ exporter = CSVExporter()
 service = BackupService(spotify_client, dropbox_client, exporter, settings)
 result = service.backup_all_playlists()
 print(result.successful, result.failed)
+
+sync_result = service.sync_all_playlists()
+print(sync_result.playlists_updated, sync_result.total_new_tracks)
 ```
 
 ## Design Decisions

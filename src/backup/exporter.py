@@ -21,6 +21,8 @@ CSV_FIELDS = [
     "is_local",
 ]
 
+CSV_BOM = "\ufeff"
+
 _INVALID_FILENAME_CHARS = re.compile(r'[\\/:*?"<>|]+')
 _WHITESPACE = re.compile(r"\s+")
 
@@ -53,7 +55,7 @@ def playlist_to_csv(playlist: Playlist) -> str:
     writer.writeheader()
     writer.writerows(tracks_to_csv_rows(playlist.tracks))
     # Prepend BOM for Excel compatibility.
-    return "\ufeff" + buffer.getvalue()
+    return CSV_BOM + buffer.getvalue()
 
 
 def generate_filename(playlist: Playlist) -> str:
