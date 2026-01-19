@@ -31,21 +31,26 @@ CommandFunc = TypeVar("CommandFunc", bound=Callable[..., object])
 
 def typer_callback(func: CommandFunc) -> CommandFunc:
     """Typed wrapper around the Typer callback decorator."""
-    return cast(Callable[[CommandFunc], CommandFunc], app.callback())(func)
+    decorator: object = app.callback()
+    return cast(Callable[[CommandFunc], CommandFunc], decorator)(func)
 
 
 def typer_command(name: Optional[str] = None) -> Callable[[CommandFunc], CommandFunc]:
     """Typed wrapper around the Typer command decorator."""
     if name:
-        return cast(Callable[[CommandFunc], CommandFunc], app.command(name))
-    return cast(Callable[[CommandFunc], CommandFunc], app.command())
+        decorator: object = app.command(name)
+    else:
+        decorator = app.command()
+    return cast(Callable[[CommandFunc], CommandFunc], decorator)
 
 
 def typer_auth_command(name: Optional[str] = None) -> Callable[[CommandFunc], CommandFunc]:
     """Typed wrapper around the auth subcommand decorator."""
     if name:
-        return cast(Callable[[CommandFunc], CommandFunc], auth_app.command(name))
-    return cast(Callable[[CommandFunc], CommandFunc], auth_app.command())
+        decorator: object = auth_app.command(name)
+    else:
+        decorator = auth_app.command()
+    return cast(Callable[[CommandFunc], CommandFunc], decorator)
 
 
 @typer_callback
