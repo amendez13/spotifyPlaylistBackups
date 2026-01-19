@@ -2,15 +2,18 @@
 
 from __future__ import annotations
 
+import csv
+import io
 import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from src.backup.exporter import CSVExporter
+from src.backup.differ import find_new_tracks
+from src.backup.exporter import CSV_BOM, CSV_FIELDS, CSVExporter
 from src.config import Settings
 from src.dropbox.client import DropboxClient
 from src.spotify.client import SpotifyClient
-from src.spotify.models import Playlist
+from src.spotify.models import Playlist, Track
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +33,22 @@ class BackupResult:
     successful: int
     failed: int
     playlist_results: List[PlaylistBackupResult]
+
+
+@dataclass
+class PlaylistSyncResult:
+    playlist_name: str
+    new_tracks: int
+    total_tracks: int
+    updated: bool
+
+
+@dataclass
+class SyncResult:
+    playlists_checked: int
+    playlists_updated: int
+    total_new_tracks: int
+    results: List[PlaylistSyncResult]
 
 
 class BackupService:
@@ -85,6 +104,41 @@ class BackupService:
             )
         return self._backup_playlist_data(target)
 
+    def sync_all_playlists(self) -> SyncResult:
+        """Sync all playlists, updating CSVs if new tracks are found."""
+        playlists = self._spotify.get_all_playlists()
+        results: List[PlaylistSyncResult] = []
+        playlists_updated = 0
+        total_new_tracks = 0
+
+        logger.info("Starting sync for %s playlists", len(playlists))
+        for playlist in playlists:
+            result = self._sync_playlist_data(playlist)
+            results.append(result)
+            if result.updated:
+                playlists_updated += 1
+                total_new_tracks += result.new_tracks
+
+        return SyncResult(
+            playlists_checked=len(playlists),
+            playlists_updated=playlists_updated,
+            total_new_tracks=total_new_tracks,
+            results=results,
+        )
+
+    def sync_playlist(self, playlist_id: str) -> PlaylistSyncResult:
+        """Sync a single playlist."""
+        playlists = self._spotify.get_all_playlists()
+        playlist = next((item for item in playlists if item.id == playlist_id), None)
+        if not playlist:
+            return PlaylistSyncResult(
+                playlist_name=playlist_id,
+                new_tracks=0,
+                total_tracks=0,
+                updated=False,
+            )
+        return self._sync_playlist_data(playlist)
+
     def _backup_playlist_data(self, playlist: Playlist) -> PlaylistBackupResult:
         file_name = self._exporter.generate_filename(playlist)
         file_path = self._build_backup_path(file_name)
@@ -107,6 +161,38 @@ class BackupService:
                 error=str(exc),
             )
 
+    def _sync_playlist_data(self, playlist: Playlist) -> PlaylistSyncResult:
+        file_name = self._exporter.generate_filename(playlist)
+        file_path = self._build_backup_path(file_name)
+        existing_csv = self._dropbox.download_file(file_path)
+        if existing_csv is None:
+            logger.info("No existing backup for %s; creating full export.", playlist.name)
+            self._dropbox.upload_file(self._exporter.playlist_to_csv(playlist), file_path)
+            return PlaylistSyncResult(
+                playlist_name=playlist.name,
+                new_tracks=len(playlist.tracks),
+                total_tracks=len(playlist.tracks),
+                updated=True,
+            )
+
+        new_tracks = find_new_tracks(playlist.tracks, existing_csv)
+        if not new_tracks:
+            return PlaylistSyncResult(
+                playlist_name=playlist.name,
+                new_tracks=0,
+                total_tracks=len(playlist.tracks),
+                updated=False,
+            )
+
+        updated_csv = self._append_tracks(existing_csv, new_tracks)
+        self._dropbox.upload_file(updated_csv, file_path)
+        return PlaylistSyncResult(
+            playlist_name=playlist.name,
+            new_tracks=len(new_tracks),
+            total_tracks=len(playlist.tracks),
+            updated=True,
+        )
+
     def _build_backup_path(self, filename: str) -> str:
         folder = (self._settings.backup_folder or "").strip()
         if not folder:
@@ -116,3 +202,22 @@ class BackupService:
         folder = folder.rstrip("/")
         self._dropbox.ensure_folder_exists(folder)
         return f"{folder}/{filename}"
+
+    def _append_tracks(self, existing_csv: str, new_tracks: List[Track]) -> str:
+        existing_csv = existing_csv.lstrip(CSV_BOM)
+        rows = self._exporter.tracks_to_csv_rows(new_tracks)
+
+        buffer = io.StringIO()
+        writer = csv.DictWriter(buffer, fieldnames=CSV_FIELDS, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+        new_csv = buffer.getvalue().splitlines()[1:]
+
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=CSV_FIELDS, quoting=csv.QUOTE_MINIMAL, lineterminator="\n")
+        writer.writeheader()
+        combined_lines = output.getvalue().splitlines()
+        existing_lines = [line for line in existing_csv.splitlines()[1:] if line.strip()]
+        combined_lines.extend(existing_lines)
+        combined_lines.extend(new_csv)
+        return CSV_BOM + "\n".join(combined_lines)
