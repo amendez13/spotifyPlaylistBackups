@@ -8,6 +8,7 @@ Welcome to the spotifyPlaylistBackups documentation. This index provides easy ac
 - [Getting Started](#getting-started) - Start here if you're new
 - [Setup Guide](#setup-guides) - Configure your environment
 - [Configuration](#configuration) - Settings and overrides
+- [Dropbox Authentication](#dropbox-authentication) - OAuth flow and token storage
 - [CSV Export](#csv-export) - Export playlists to CSV
 - [Spotify Authentication](#spotify-authentication) - OAuth flow and token caching
 - [Spotify Client](#spotify-client) - Fetch playlists and tracks
@@ -45,6 +46,13 @@ Welcome to the spotifyPlaylistBackups documentation. This index provides easy ac
 - YAML schema and env overrides
 - Required fields and validation
 - Usage example
+
+## Dropbox Authentication
+
+**[DROPBOX_AUTH.md](DROPBOX_AUTH.md)**
+- OAuth flow and scopes
+- Token persistence
+- Usage examples
 
 ## CSV Export
 
