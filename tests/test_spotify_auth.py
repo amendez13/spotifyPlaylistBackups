@@ -62,15 +62,16 @@ class DummySpotify:
 
 
 def _settings() -> Settings:
-    return Settings.model_validate(
-        {
-            "SPOTIFY_CLIENT_ID": "client-id",
-            "SPOTIFY_CLIENT_SECRET": "client-secret",
-            "SPOTIFY_REDIRECT_URI": "http://localhost:8888/callback",
-            "DROPBOX_APP_KEY": "dropbox-key",
-            "DROPBOX_APP_SECRET": "dropbox-secret",
-            "TOKEN_STORAGE_PATH": ".spotify_token.json",
-        }
+    return Settings.model_construct(
+        spotify_client_id="client-id",
+        spotify_client_secret="client-secret",
+        spotify_redirect_uri="http://localhost:8888/callback",
+        dropbox_app_key="dropbox-key",
+        dropbox_app_secret="dropbox-secret",
+        dropbox_refresh_token=None,
+        backup_folder="/spotify-backups",
+        csv_delimiter=",",
+        token_storage_path=".spotify_token.json",
     )
 
 
@@ -173,14 +174,16 @@ def test_is_authenticated_handles_validation_error(monkeypatch: pytest.MonkeyPat
 
 
 def test_build_cache_handler_creates_parent(tmp_path: Path) -> None:
-    settings = Settings.model_validate(
-        {
-            "SPOTIFY_CLIENT_ID": "client-id",
-            "SPOTIFY_CLIENT_SECRET": "client-secret",
-            "DROPBOX_APP_KEY": "dropbox-key",
-            "DROPBOX_APP_SECRET": "dropbox-secret",
-            "TOKEN_STORAGE_PATH": str(tmp_path / "nested" / "token.json"),
-        }
+    settings = Settings.model_construct(
+        spotify_client_id="client-id",
+        spotify_client_secret="client-secret",
+        spotify_redirect_uri="http://localhost:8888/callback",
+        dropbox_app_key="dropbox-key",
+        dropbox_app_secret="dropbox-secret",
+        dropbox_refresh_token=None,
+        backup_folder="/spotify-backups",
+        csv_delimiter=",",
+        token_storage_path=str(tmp_path / "nested" / "token.json"),
     )
     cache_handler = auth_module._build_cache_handler(settings)
     assert (tmp_path / "nested").exists()

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from types import SimpleNamespace
 from typing import Any, Dict, List
 
@@ -9,7 +10,7 @@ import pytest
 
 from dropbox.exceptions import ApiError, HttpError, RateLimitError
 from src.config import Settings
-from src.dropbox.client import DropboxClient, _is_conflict, _is_not_found, _normalize_path
+from src.dropbox.client import DropboxClient, DropboxFileInfo, _is_conflict, _is_not_found, _normalize_path
 
 
 class FakePathError:
@@ -103,6 +104,20 @@ def test_list_files_paginates() -> None:
     client = DropboxClient(fake)
     files = client.list_files("/folder")
     assert files == ["/one.txt", "/two.txt"]
+
+
+def test_list_file_metadata_returns_files() -> None:
+    fake = FakeDropbox()
+    now = datetime(2024, 1, 1, 12, 0, tzinfo=timezone.utc)
+    page1 = SimpleNamespace(
+        entries=[SimpleNamespace(path_display="/one.csv", server_modified=now)],
+        has_more=False,
+        cursor="cursor-1",
+    )
+    fake.list_pages = [page1]
+    client = DropboxClient(fake)
+    files = client.list_file_metadata("/folder")
+    assert files == [DropboxFileInfo(path="/one.csv", server_modified=now)]
 
 
 def test_ensure_folder_exists_ignores_conflict(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -223,6 +238,17 @@ def test_list_files_returns_empty_on_missing() -> None:
     fake.files_list_folder = missing  # type: ignore[assignment]
     client = DropboxClient(fake)
     assert client.list_files("/missing") == []
+
+
+def test_list_file_metadata_returns_empty_on_missing() -> None:
+    fake = FakeDropbox()
+
+    def missing(_path: str) -> SimpleNamespace:
+        raise _api_error(not_found=True)
+
+    fake.files_list_folder = missing  # type: ignore[assignment]
+    client = DropboxClient(fake)
+    assert client.list_file_metadata("/missing") == []
 
 
 def test_ensure_folder_exists_noop_on_empty() -> None:
