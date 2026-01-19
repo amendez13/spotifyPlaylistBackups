@@ -4,85 +4,132 @@ This document describes the technical architecture of spotifyPlaylistBackups.
 
 ## Overview
 
-[High-level description of the system architecture]
+spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uploads the results to Dropbox. The system is split into configuration management, API clients, and a backup orchestration layer.
 
 ## System Components
 
 ### Component Diagram
 
 ```
-┌─────────────────┐     ┌─────────────────┐
-│   Component A   │────▶│   Component B   │
-└─────────────────┘     └─────────────────┘
-         │                       │
-         ▼                       ▼
-┌─────────────────┐     ┌─────────────────┐
-│   Component C   │     │   Component D   │
-└─────────────────┘     └─────────────────┘
+┌────────────────────┐     ┌──────────────────────┐
+│  Config Settings   │────▶│    Backup Service    │
+└────────────────────┘     └──────────┬───────────┘
+                                     │
+                     ┌───────────────┴───────────────┐
+                     ▼                               ▼
+           ┌──────────────────┐            ┌──────────────────┐
+           │ Spotify Client   │            │ Dropbox Client   │
+           └──────────────────┘            └──────────────────┘
+                     │                               │
+                     ▼                               ▼
+           ┌──────────────────┐            ┌──────────────────┐
+           │ CSV Exporter     │            │ Dropbox Storage  │
+           └──────────────────┘            └──────────────────┘
 ```
 
-### Component A
+### Config Settings
 
-**Purpose**: [Description]
+**Purpose**: Load settings from YAML and environment variables.
 
 **Responsibilities**:
-- Responsibility 1
-- Responsibility 2
+- Provide Spotify and Dropbox credentials
+- Provide backup folder and CSV delimiter configuration
 
 **Key Files**:
-- `src/component_a.py`
+- `src/config/settings.py`
 
-### Component B
+### Spotify Integration
 
-**Purpose**: [Description]
+**Purpose**: Authenticate and fetch playlist data.
 
 **Responsibilities**:
-- Responsibility 1
-- Responsibility 2
+- OAuth token handling (`src/spotify/auth.py`)
+- Playlist and track retrieval (`src/spotify/client.py`)
+- Data modeling (`src/spotify/models.py`)
+
+### Dropbox Integration
+
+**Purpose**: Authenticate and store backup artifacts.
+
+**Responsibilities**:
+- OAuth token handling (`src/dropbox/auth.py`)
+- File upload and folder management (`src/dropbox/client.py`)
+
+### Backup Service
+
+**Purpose**: Orchestrate full playlist backups.
+
+**Responsibilities**:
+- Iterate over playlists
+- Convert tracks to CSV (`src/backup/exporter.py`)
+- Upload files to Dropbox (`src/dropbox/client.py`)
+
+**Key Files**:
+- `src/backup/service.py`
 
 **Key Files**:
 - `src/component_b.py`
 
 ## Data Flow
 
-1. Step 1: [Description]
-2. Step 2: [Description]
-3. Step 3: [Description]
+1. Load settings via `load_settings()`.
+2. Create `SpotifyClient` and `DropboxClient`.
+3. `BackupService` fetches playlists and tracks.
+4. `CSVExporter` generates per-playlist CSV output.
+5. Dropbox client uploads the CSV into the backup folder.
+
+### Usage Example
+
+```python
+from src.backup.exporter import CSVExporter
+from src.backup.service import BackupService
+from src.config import load_settings
+from src.dropbox.client import DropboxClient
+from src.spotify.client import SpotifyClient
+
+settings = load_settings()
+spotify_client = SpotifyClient.from_settings(settings)
+dropbox_client = DropboxClient.from_settings(settings)
+exporter = CSVExporter()
+
+service = BackupService(spotify_client, dropbox_client, exporter, settings)
+result = service.backup_all_playlists()
+print(result.successful, result.failed)
+```
 
 ## Design Decisions
 
-### Decision 1: [Title]
+### Decision 1: OAuth with refresh tokens
 
-**Context**: [Why this decision was needed]
+**Context**: Long-lived automation requires stable authentication.
 
-**Decision**: [What was decided]
-
-**Consequences**:
-- Pro: [Positive consequence]
-- Con: [Negative consequence]
-
-### Decision 2: [Title]
-
-**Context**: [Why this decision was needed]
-
-**Decision**: [What was decided]
+**Decision**: Use refresh-token based OAuth flows for Spotify and Dropbox.
 
 **Consequences**:
-- Pro: [Positive consequence]
-- Con: [Negative consequence]
+- Pro: Automatic token refresh without user re-authentication.
+- Con: Requires storing refresh tokens securely.
+
+### Decision 2: CSV export with BOM
+
+**Context**: Backups should be easily opened in spreadsheets.
+
+**Decision**: Prefix CSV output with a UTF-8 BOM.
+
+**Consequences**:
+- Pro: Excel opens files without encoding issues.
+- Con: Adds extra bytes for non-spreadsheet consumers.
 
 ## Performance Considerations
 
-- [Consideration 1]
-- [Consideration 2]
+- Pagination is handled by the Spotify and Dropbox clients to avoid large payloads.
+- Rate limiting is retried with exponential backoff.
 
 ## Security Considerations
 
-- [Security measure 1]
-- [Security measure 2]
+- Refresh tokens are stored in `config/config.yaml` (gitignored).
+- OAuth flows use PKCE where supported.
 
 ## Future Enhancements
 
-- [ ] Enhancement 1
-- [ ] Enhancement 2
-- [ ] Enhancement 3
+- [ ] Incremental backups based on playlist snapshot IDs
+- [ ] Parallel exports for large libraries
