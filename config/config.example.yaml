@@ -28,4 +28,4 @@ backup:
 
 # Token storage settings
 tokens:
-  storage_path: config/tokens.json
+  storage_path: .spotify_token.json
