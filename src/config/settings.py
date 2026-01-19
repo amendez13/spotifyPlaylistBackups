@@ -79,7 +79,7 @@ class Settings(BaseSettings):
         ),
     )
     token_storage_path: str = Field(
-        default="config/tokens.json",
+        default=".spotify_token.json",
         validation_alias=AliasChoices(
             "TOKEN_STORAGE_PATH",
             AliasPath("tokens", "storage_path"),

@@ -86,7 +86,7 @@ backup:
   csv_delimiter: ","
 
 tokens:
-  storage_path: config/tokens.json
+  storage_path: .spotify_token.json
 ```
 
 ### Environment Variables
@@ -103,8 +103,12 @@ You can also configure the application using environment variables:
 | `DROPBOX_REFRESH_TOKEN` | Dropbox refresh token | empty |
 | `BACKUP_FOLDER` | Remote backup folder | `/spotify-backups` |
 | `CSV_DELIMITER` | CSV delimiter | `,` |
-| `TOKEN_STORAGE_PATH` | Token cache path | `config/tokens.json` |
+| `TOKEN_STORAGE_PATH` | Token cache path | `.spotify_token.json` |
 | `SPOTIFY_BACKUPS_CONFIG_PATH` | Path to config YAML | `config/config.yaml` |
+
+### Spotify Authentication
+
+On first use, the CLI will open a browser window for Spotify OAuth consent. After approving access, paste the redirect URL back into the prompt. Tokens are cached locally at `.spotify_token.json` (or the path in `TOKEN_STORAGE_PATH`).
 
 ## Development Setup
 

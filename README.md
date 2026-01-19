@@ -55,6 +55,8 @@ python -m src.main --help
 python -m src.main info
 ```
 
+On first Spotify-enabled command run, the app will open a browser for OAuth consent and cache tokens in `.spotify_token.json`.
+
 ## Configuration
 
 Configuration is stored in `config/config.yaml`. See `config/config.example.yaml` for all available options.
@@ -80,7 +82,7 @@ backup:
   csv_delimiter: ","
 
 tokens:
-  storage_path: config/tokens.json
+  storage_path: .spotify_token.json
 ```
 
 ## Project Structure

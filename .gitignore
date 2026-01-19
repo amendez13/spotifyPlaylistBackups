@@ -10,6 +10,7 @@ config/*.json
 # Token caches (e.g., spotipy)
 .cache
 .cache-*
+.spotify_token.json
 
 # Personal notes
 notes/
