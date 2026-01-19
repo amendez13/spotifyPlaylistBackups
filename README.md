@@ -11,6 +11,7 @@ Backup and export Spotify playlists to JSON
 - Typer-based CLI scaffold
 - YAML configuration template for Spotify and Dropbox credentials
 - Spotify OAuth client wrapper and playlist data models
+- Dropbox OAuth helper for token persistence
 - CSV export utilities for playlist backups
 - Test and quality tooling wired into CI
 

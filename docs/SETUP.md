@@ -110,6 +110,16 @@ You can also configure the application using environment variables:
 
 On first use, the CLI will open a browser window for Spotify OAuth consent. After approving access, paste the redirect URL back into the prompt. Tokens are cached locally at `.spotify_token.json` (or the path in `TOKEN_STORAGE_PATH`).
 
+### Dropbox Authentication
+
+Run the Dropbox authorization helper to obtain a refresh token and store it in `config/config.yaml`:
+
+```bash
+python scripts/authorize_dropbox.py
+```
+
+See [DROPBOX_AUTH.md](DROPBOX_AUTH.md) for details.
+
 ## Development Setup
 
 ### Install Pre-commit Hooks
