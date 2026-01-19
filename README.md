@@ -13,6 +13,7 @@ Backup and export Spotify playlists to JSON
 - Spotify OAuth client wrapper and playlist data models
 - Dropbox OAuth helper for token persistence
 - Dropbox client wrapper for file operations
+- Backup service orchestrator for full playlist exports
 - CSV export utilities for playlist backups
 - Test and quality tooling wired into CI
 

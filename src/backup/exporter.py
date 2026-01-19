@@ -64,3 +64,16 @@ def generate_filename(playlist: Playlist) -> str:
     if not name:
         name = "playlist"
     return f"{name}-{playlist.id}.csv"
+
+
+class CSVExporter:
+    """Thin wrapper to expose CSV export helpers."""
+
+    def playlist_to_csv(self, playlist: Playlist) -> str:
+        return playlist_to_csv(playlist)
+
+    def tracks_to_csv_rows(self, tracks: List[Track]) -> List[Dict[str, object]]:
+        return tracks_to_csv_rows(tracks)
+
+    def generate_filename(self, playlist: Playlist) -> str:
+        return generate_filename(playlist)
