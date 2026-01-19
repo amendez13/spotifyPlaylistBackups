@@ -1,6 +1,7 @@
 # Config files with sensitive data
 config/*.yaml
 !config/config.example.yaml
+config/*.json
 
 # Environment files
 .env

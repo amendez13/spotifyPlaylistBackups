@@ -4,32 +4,6 @@
 #
 # WARNING: config.yaml contains sensitive data and should NOT be committed to git
 
-# Application settings
-app:
-  # Enable debug mode (more verbose logging)
-  debug: false
-
-  # Logging level: DEBUG, INFO, WARNING, ERROR, CRITICAL
-  log_level: INFO
-
-  # Log file path (optional, logs to console if not set)
-  # log_file: logs/app.log
-
-# Add your configuration sections below
-# Example:
-#
-# database:
-#   host: localhost
-#   port: 5432
-#   name: mydb
-#   user: myuser
-#   password: REPLACE_WITH_YOUR_PASSWORD
-#
-# api:
-#   base_url: https://api.example.com
-#   api_key: REPLACE_WITH_YOUR_API_KEY
-#   timeout: 30
-
 # Spotify API credentials
 spotify:
   client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
@@ -42,15 +16,16 @@ spotify:
 
 # Dropbox API credentials
 dropbox:
-  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
+  app_key: REPLACE_WITH_DROPBOX_APP_KEY
+  app_secret: REPLACE_WITH_DROPBOX_APP_SECRET
+  # Optional refresh token for long-lived access
+  # refresh_token: REPLACE_WITH_DROPBOX_REFRESH_TOKEN
 
-# Processing settings
-processing:
-  # Maximum concurrent operations
-  max_workers: 4
+# Backup settings
+backup:
+  folder: /spotify-backups
+  csv_delimiter: ","
 
-  # Batch size for bulk operations
-  batch_size: 100
-
-  # Enable dry run mode (no actual changes)
-  dry_run: false
+# Token storage settings
+tokens:
+  storage_path: config/tokens.json

@@ -71,7 +71,16 @@ spotify:
   redirect_uri: http://localhost:8888/callback
 
 dropbox:
-  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
+  app_key: REPLACE_WITH_DROPBOX_APP_KEY
+  app_secret: REPLACE_WITH_DROPBOX_APP_SECRET
+  # refresh_token: REPLACE_WITH_DROPBOX_REFRESH_TOKEN
+
+backup:
+  folder: /spotify-backups
+  csv_delimiter: ","
+
+tokens:
+  storage_path: config/tokens.json
 ```
 
 ## Project Structure
