@@ -7,6 +7,10 @@ Welcome to the spotifyPlaylistBackups documentation. This index provides easy ac
 **For Users:**
 - [Getting Started](#getting-started) - Start here if you're new
 - [Setup Guide](#setup-guides) - Configure your environment
+- [Configuration](#configuration) - Settings and overrides
+- [CSV Export](#csv-export) - Export playlists to CSV
+- [Spotify Authentication](#spotify-authentication) - OAuth flow and token caching
+- [Spotify Client](#spotify-client) - Fetch playlists and tracks
 
 **For Developers:**
 - [Architecture](#architecture) - Technical design and implementation details
@@ -34,6 +38,34 @@ Welcome to the spotifyPlaylistBackups documentation. This index provides easy ac
 - Configuration options
 - Verification steps
 - Troubleshooting
+
+## Configuration
+
+**[CONFIG.md](CONFIG.md)**
+- YAML schema and env overrides
+- Required fields and validation
+- Usage example
+
+## CSV Export
+
+**[EXPORT.md](EXPORT.md)**
+- CSV schema and encoding
+- Filename generation
+- Usage example
+
+## Spotify Authentication
+
+**[SPOTIFY_AUTH.md](SPOTIFY_AUTH.md)**
+- OAuth flow and scopes
+- Token caching behavior
+- Usage examples
+
+## Spotify Client
+
+**[SPOTIFY_CLIENT.md](SPOTIFY_CLIENT.md)**
+- Data models for playlists and tracks
+- Pagination and rate-limit handling
+- Usage examples
 
 ---
 
