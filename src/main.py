@@ -1,25 +1,31 @@
-"""Main entry point for spotifyPlaylistBackups."""
+"""CLI entry point for spotifyPlaylistBackups."""
 
-from typing import Optional
+from __future__ import annotations
+
+import typer
+
+APP_HELP = "Backup and export Spotify playlists to JSON."
+
+app = typer.Typer(help=APP_HELP)
 
 
-def greet(name: Optional[str] = None) -> str:
-    """Return a greeting message.
+# Typer decorators are untyped; ignore misc to keep strict mypy on.
+@app.callback()  # type: ignore[misc]
+def cli() -> None:
+    """Backup and export Spotify playlists to JSON."""
+    return None
 
-    Args:
-        name: Optional name to greet. Defaults to "World".
 
-    Returns:
-        A greeting string.
-    """
-    if name is None:
-        name = "World"
-    return f"Hello, {name}!"
+# Typer decorators are untyped; ignore misc to keep strict mypy on.
+@app.command()  # type: ignore[misc]
+def info() -> None:
+    """Display a placeholder message for the CLI."""
+    typer.echo("spotifyPlaylistBackups CLI is under construction.")
 
 
 def main() -> None:
-    """Main entry point."""
-    print(greet())
+    """Run the CLI."""
+    app()
 
 
 if __name__ == "__main__":

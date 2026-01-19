@@ -76,7 +76,13 @@ app:
   debug: false
   log_level: INFO
 
-# Add your configuration sections
+spotify:
+  client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
+  client_secret: REPLACE_WITH_SPOTIFY_CLIENT_SECRET
+  redirect_uri: http://localhost:8888/callback
+
+dropbox:
+  access_token: REPLACE_WITH_DROPBOX_ACCESS_TOKEN
 ```
 
 ### Environment Variables
