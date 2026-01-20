@@ -1,16 +1,12 @@
 # Setup Guide
 
-This guide walks you through setting up spotifyPlaylistBackups for development or usage.
+This guide walks you through setting up spotifyPlaylistBackups for local usage or development.
 
 ## Prerequisites
 
 - Python 3.10 or higher
 - pip (Python package installer)
 - git
-
-### Optional
-
-- [List optional dependencies]
 
 ## Installation
 
@@ -24,7 +20,6 @@ cd spotifyPlaylistBackups
 ### 2. Create Virtual Environment
 
 ```bash
-# Create virtual environment
 python3 -m venv venv
 
 # Activate virtual environment
@@ -42,33 +37,39 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-### 4. Configure the Application
+## Create Spotify API App
+
+1. Visit the Spotify Developer Dashboard: https://developer.spotify.com/dashboard
+2. Create a new app and give it a name/description.
+3. Open the app settings and add a redirect URI:
+   - `http://localhost:8888/callback`
+4. Copy the Client ID and Client Secret for `config/config.yaml`.
+
+![Spotify Developer Dashboard](images/spotify-app-create.svg)
+![Spotify App Settings](images/spotify-app-settings.svg)
+
+## Create Dropbox API App
+
+1. Visit the Dropbox App Console: https://www.dropbox.com/developers/apps
+2. Create a new app with Scoped access.
+3. Choose **App folder** access to keep backups in `/Apps/<app-name>`.
+4. In **Permissions**, enable:
+   - `files.content.read`
+   - `files.content.write`
+5. Copy the App Key and App Secret for `config/config.yaml`.
+
+![Dropbox App Console](images/dropbox-app-create.svg)
+![Dropbox App Settings](images/dropbox-app-settings.svg)
+
+## Configure the Application
+
+### 1. Create the Config File
 
 ```bash
-# Copy example configuration
 cp config/config.example.yaml config/config.yaml
-
-# Edit configuration with your settings
-# On macOS/Linux:
-nano config/config.yaml
-# Or use your preferred editor
 ```
 
-### 5. Verify Installation
-
-```bash
-# Run tests to verify setup
-pytest
-
-# Or run the application
-python -m src.main --help
-```
-
-## Configuration
-
-### config/config.yaml
-
-The main configuration file. See `config/config.example.yaml` for all available options.
+### 2. Update Config Values
 
 ```yaml
 spotify:
@@ -89,9 +90,19 @@ tokens:
   storage_path: .spotify_token.json
 ```
 
-### Environment Variables
+### 3. Authenticate
 
-You can also configure the application using environment variables:
+```bash
+# Spotify OAuth
+python -m src.main auth spotify
+
+# Dropbox OAuth (stores refresh token in config/config.yaml)
+python -m src.main auth dropbox
+```
+
+## Environment Variables
+
+You can override the YAML config with environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
@@ -106,65 +117,19 @@ You can also configure the application using environment variables:
 | `TOKEN_STORAGE_PATH` | Token cache path | `.spotify_token.json` |
 | `SPOTIFY_BACKUPS_CONFIG_PATH` | Path to config YAML | `config/config.yaml` |
 
-### Spotify Authentication
-
-On first use, the CLI will open a browser window for Spotify OAuth consent. After approving access, paste the redirect URL back into the prompt. Tokens are cached locally at `.spotify_token.json` (or the path in `TOKEN_STORAGE_PATH`).
-
-### Dropbox Authentication
-
-Run the Dropbox authorization helper to obtain a refresh token and store it in `config/config.yaml`:
+## Verify Installation
 
 ```bash
-python scripts/authorize_dropbox.py
+python -m src.main --help
+python -m src.main list
 ```
 
-See [DROPBOX_AUTH.md](DROPBOX_AUTH.md) for details.
+## Notes
 
-## Development Setup
-
-### Install Pre-commit Hooks
-
-```bash
-# Install pre-commit hooks
-pre-commit install
-
-# Verify hooks work
-pre-commit run --all-files
-```
-
-### IDE Setup
-
-#### VS Code
-
-Recommended extensions:
-- Python
-- Pylance
-- Black Formatter
-- isort
-
-Settings (`.vscode/settings.json`):
-```json
-{
-    "python.defaultInterpreterPath": "./venv/bin/python",
-    "python.formatting.provider": "black",
-    "editor.formatOnSave": true,
-    "[python]": {
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": true
-        }
-    }
-}
-```
-
-#### PyCharm
-
-1. Set Python interpreter to `./venv/bin/python`
-2. Enable Black formatter
-3. Enable isort for imports
+- The images in this guide are placeholders to indicate where screenshots belong.
+- See `docs/CONFIG.md` for a full configuration reference.
 
 ## Troubleshooting
-
-### Common Issues
 
 **Virtual environment not activated**
 ```bash
@@ -176,17 +141,17 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Pre-commit hooks not running**
-```bash
-pre-commit install
-```
-
 **Configuration file not found**
 ```bash
 cp config/config.example.yaml config/config.yaml
 ```
 
-### Getting Help
+**Dropbox refresh token missing**
+```bash
+python -m src.main auth dropbox
+```
+
+## Getting Help
 
 - Check the [Documentation Index](INDEX.md)
 - Review [CI documentation](CI.md) for testing issues

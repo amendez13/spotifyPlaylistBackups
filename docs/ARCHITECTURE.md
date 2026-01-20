@@ -6,6 +6,22 @@ This document describes the technical architecture of spotifyPlaylistBackups.
 
 spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uploads the results to Dropbox. The system is split into configuration management, API clients, and a backup orchestration layer.
 
+## Project Structure
+
+```
+spotifyPlaylistBackups/
+├── config/               # YAML configuration templates
+├── docs/                 # User and developer documentation
+├── scripts/              # Helper scripts (authorization utilities)
+├── src/
+│   ├── backup/           # Backup/export/sync orchestration
+│   ├── config/           # Settings loading and validation
+│   ├── dropbox/          # Dropbox auth and client
+│   ├── spotify/          # Spotify auth, client, and models
+│   └── main.py           # Typer CLI entry point
+└── tests/                # Unit tests
+```
+
 ## System Components
 
 ### Component Diagram
@@ -58,6 +74,18 @@ spotifyPlaylistBackups fetches Spotify playlists, converts them to CSV, and uplo
 **Responsibilities**:
 - OAuth token handling (`src/dropbox/auth.py`)
 - File upload and folder management (`src/dropbox/client.py`)
+
+### API Integration Details
+
+**Spotify**:
+- Uses Spotipy to access playlist and track APIs.
+- Handles pagination and rate limiting in `SpotifyClient`.
+- Uses cached OAuth tokens stored at `TOKEN_STORAGE_PATH`.
+
+**Dropbox**:
+- Uses the Dropbox SDK with refresh tokens.
+- Uploads full CSVs and downloads existing backups for sync.
+- Lists backup metadata for status reporting.
 
 ### Backup Service
 
@@ -132,10 +160,10 @@ print(sync_result.playlists_updated, sync_result.total_new_tracks)
 ### CLI Example
 
 ```bash
-spotify-backup auth spotify
-spotify-backup auth dropbox
-spotify-backup backup
-spotify-backup sync
+python -m src.main auth spotify
+python -m src.main auth dropbox
+python -m src.main backup
+python -m src.main sync
 ```
 
 ## Design Decisions

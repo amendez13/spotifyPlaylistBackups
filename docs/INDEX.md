@@ -1,151 +1,52 @@
 # Documentation Index
 
-Welcome to the spotifyPlaylistBackups documentation. This index provides easy access to all documentation in this repository.
+Welcome to the spotifyPlaylistBackups documentation.
 
 ## Quick Links
 
-**For Users:**
-- [Getting Started](#getting-started) - Start here if you're new
-- [Setup Guide](#setup-guides) - Configure your environment
-- [Configuration](#configuration) - Settings and overrides
-- [Dropbox Authentication](#dropbox-authentication) - OAuth flow and token storage
-- [Dropbox Client](#dropbox-client) - File operations and retries
-- [CSV Export](#csv-export) - Export playlists to CSV
-- [Spotify Authentication](#spotify-authentication) - OAuth flow and token caching
-- [Spotify Client](#spotify-client) - Fetch playlists and tracks
+**For Users**
+- [README](../README.md) - Overview and quick start
+- [Setup Guide](SETUP.md) - Create API apps and configure credentials
+- [Usage Guide](USAGE.md) - Command reference and workflows
+- [Configuration](CONFIG.md) - YAML and env var reference
 
-**For Developers:**
-- [Architecture](#architecture) - Technical design and implementation details
-- [Developer Guide](#developer-resources) - Contributing and development workflow
+**For Developers**
+- [Architecture](ARCHITECTURE.md) - System design and data flow
+- [CI](CI.md) - CI pipeline and local checks
+- [CLAUDE.md](../CLAUDE.md) - Project guidance for AI assistants
 
 ---
 
 ## Getting Started
 
-**[README.md](../README.md)**
-- Project overview and features
-- Quick start guide
-- Installation instructions
-- Basic configuration
-- Usage examples
-- Troubleshooting common issues
-
----
-
-## Setup Guides
-
-**[SETUP.md](SETUP.md)**
-- Prerequisites and system requirements
-- Step-by-step installation guide
-- Configuration options
-- Verification steps
-- Troubleshooting
+- **[README.md](../README.md)**: Overview, installation, and quick start.
+- **[SETUP.md](SETUP.md)**: Step-by-step setup with Spotify/Dropbox app creation.
+- **[USAGE.md](USAGE.md)**: Commands, workflows, automation, troubleshooting.
 
 ## Configuration
 
-**[CONFIG.md](CONFIG.md)**
-- YAML schema and env overrides
-- Required fields and validation
-- Usage example
+- **[CONFIG.md](CONFIG.md)**: YAML schema and environment variable overrides.
 
-## Dropbox Authentication
+## Authentication
 
-**[DROPBOX_AUTH.md](DROPBOX_AUTH.md)**
-- OAuth flow and scopes
-- Token persistence
-- Usage examples
+- **[SPOTIFY_AUTH.md](SPOTIFY_AUTH.md)**: Spotify OAuth flow and token caching.
+- **[DROPBOX_AUTH.md](DROPBOX_AUTH.md)**: Dropbox OAuth flow and refresh tokens.
 
-## Dropbox Client
+## Integration Details
 
-**[DROPBOX_CLIENT.md](DROPBOX_CLIENT.md)**
-- File operations and retry behavior
-- Path handling
-- Usage examples
-
-## CSV Export
-
-**[EXPORT.md](EXPORT.md)**
-- CSV schema and encoding
-- Filename generation
-- Usage example
-
-## Spotify Authentication
-
-**[SPOTIFY_AUTH.md](SPOTIFY_AUTH.md)**
-- OAuth flow and scopes
-- Token caching behavior
-- Usage examples
-
-## Spotify Client
-
-**[SPOTIFY_CLIENT.md](SPOTIFY_CLIENT.md)**
-- Data models for playlists and tracks
-- Pagination and rate-limit handling
-- Usage examples
-
----
+- **[SPOTIFY_CLIENT.md](SPOTIFY_CLIENT.md)**: Playlist/track retrieval and pagination.
+- **[DROPBOX_CLIENT.md](DROPBOX_CLIENT.md)**: File operations and retry logic.
+- **[EXPORT.md](EXPORT.md)**: CSV schema and export behavior.
 
 ## Architecture
 
-**[ARCHITECTURE.md](ARCHITECTURE.md)**
-- System architecture overview
-- Component design
-- Design decisions and trade-offs
-- Performance considerations
-- Security implications
-
----
+- **[ARCHITECTURE.md](ARCHITECTURE.md)**: Component overview, data flow, and design decisions.
 
 ## Developer Resources
 
-**[CLAUDE.md](../CLAUDE.md)**
-- Project overview for AI assistants
-- Technology stack details
-- Core workflow and key components
-- Development commands and setup
-- Common development tasks
+- **[CI.md](CI.md)**: CI workflows and local equivalents.
+- **[CLAUDE.md](../CLAUDE.md)**: Development guidance and key commands.
 
-**[CI.md](CI.md)**
-- Continuous Integration (CI) pipeline documentation
-- GitHub Actions workflow details
-- Code quality and testing automation
-- Local development workflow
-- Running CI checks locally
-- Troubleshooting CI failures
+## Planning
 
----
-
-## Project Status
-
-**Current Phase:** [Current development phase]
-- [Feature 1]
-- [Feature 2]
-
-**Next Phase:** [Upcoming phase]
-- [Planned feature 1]
-- [Planned feature 2]
-
-**Future:** [Long-term plans]
-- [Future feature 1]
-- [Future feature 2]
-
----
-
-## Quick Reference
-
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| [README.md](../README.md) | Getting started, installation, usage | All users |
-| [SETUP.md](SETUP.md) | Environment configuration | All users |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Technical architecture and design | Developers |
-| [CI.md](CI.md) | CI/CD pipeline and development workflow | Developers |
-| [CLAUDE.md](../CLAUDE.md) | AI assistant guidance | Claude Code |
-
----
-
-## Task Management
-
-**[planning/TASK_MANAGEMENT.md](planning/TASK_MANAGEMENT.md)**
-- Development phases and milestones
-- Task tracking and prioritization
-- Progress monitoring
+- **[planning/TASK_MANAGEMENT.md](planning/TASK_MANAGEMENT.md)**: Milestones and task tracking.
