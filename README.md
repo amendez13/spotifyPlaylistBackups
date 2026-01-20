@@ -4,18 +4,17 @@
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 ![Coverage](https://img.shields.io/badge/coverage-95%25-green.svg)
 
-Backup and export Spotify playlists to JSON
+Backup and sync Spotify playlists to CSV files in Dropbox.
 
 ## Features
 
-- Typer-based CLI scaffold
-- YAML configuration template for Spotify and Dropbox credentials
-- Spotify OAuth client wrapper and playlist data models
-- Dropbox OAuth helper for token persistence
-- Dropbox client wrapper for file operations
-- Backup service orchestrator for full playlist exports
-- CSV export utilities for playlist backups
-- Test and quality tooling wired into CI
+- Typer-based CLI with auth, backup, sync, list, and status commands
+- YAML configuration with environment variable overrides
+- Spotify and Dropbox OAuth helpers
+- CSV exports with Excel-friendly BOM and safe filenames
+- Sync workflow that appends only new tracks
+- Dry-run support for planning changes without writes
+- Strong test coverage and pre-commit enforcement
 
 ## Quick Start
 
@@ -32,7 +31,7 @@ git clone https://github.com/amendez13/spotifyPlaylistBackups.git
 cd spotifyPlaylistBackups
 ```
 
-2. Create and activate virtual environment:
+2. Create and activate a virtual environment:
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On macOS/Linux
@@ -50,60 +49,70 @@ cp config/config.example.yaml config/config.yaml
 # Edit config/config.yaml with your settings
 ```
 
-### Usage
-
+5. Authenticate and run a backup:
 ```bash
-# Run the application
-python -m src.main --help
-
-# Placeholder command
-python -m src.main info
+python -m src.main auth spotify
+python -m src.main auth dropbox
+python -m src.main backup
 ```
 
-On first Spotify-enabled command run, the app will open a browser for OAuth consent and cache tokens in `.spotify_token.json`.
+## Usage
+
+```bash
+# Show available commands
+python -m src.main --help
+
+# Backup all playlists
+python -m src.main backup
+
+# Backup a single playlist by name or id
+python -m src.main backup --playlist "Chill Vibes"
+
+# Sync playlists (only new tracks)
+python -m src.main sync
+
+# List playlists (add -v for counts)
+python -m src.main list -v
+
+# Show backup status
+python -m src.main status
+```
+
+### Output Example
+
+```text
+Backing up playlists:
+[OK] Chill Vibes (45 tracks) -> /spotify-backups/Chill Vibes-abc123.csv
+[OK] Workout Mix (78 tracks) -> /spotify-backups/Workout Mix-def456.csv
+Backup complete: 2/2 successful
+```
 
 ## Configuration
 
-Configuration is stored in `config/config.yaml`. See `config/config.example.yaml` for all available options.
+Configuration lives in `config/config.yaml` and can be overridden with env vars.
+See `config/config.example.yaml` for the full schema and `docs/SETUP.md` for setup details.
 
-```yaml
-# Example configuration
-app:
-  debug: false
-  log_level: INFO
+## Documentation
 
-spotify:
-  client_id: REPLACE_WITH_SPOTIFY_CLIENT_ID
-  client_secret: REPLACE_WITH_SPOTIFY_CLIENT_SECRET
-  redirect_uri: http://localhost:8888/callback
-
-dropbox:
-  app_key: REPLACE_WITH_DROPBOX_APP_KEY
-  app_secret: REPLACE_WITH_DROPBOX_APP_SECRET
-  # refresh_token: REPLACE_WITH_DROPBOX_REFRESH_TOKEN
-
-backup:
-  folder: /spotify-backups
-  csv_delimiter: ","
-
-tokens:
-  storage_path: .spotify_token.json
-```
+- [Documentation Index](docs/INDEX.md)
+- [Setup Guide](docs/SETUP.md)
+- [Usage Guide](docs/USAGE.md)
+- [Architecture](docs/ARCHITECTURE.md)
 
 ## Project Structure
 
 ```
 spotifyPlaylistBackups/
 ├── .github/workflows/    # CI/CD configuration
-├── .claude/              # Claude Code configuration
 ├── config/               # Configuration files
 ├── docs/                 # Documentation
+├── scripts/              # Helper scripts
 ├── src/                  # Source code
-│   ├── backup/           # Backup logic (placeholder)
-│   ├── config/           # Settings and config helpers (placeholder)
-│   ├── dropbox/          # Dropbox integration (placeholder)
-│   └── spotify/          # Spotify integration (placeholder)
-├── tests/                # Test files
+│   ├── backup/           # Backup and sync services
+│   ├── config/           # Settings loading
+│   ├── dropbox/          # Dropbox auth and client
+│   └── spotify/          # Spotify auth, client, and models
+├── tests/                # Test suite
 ├── CLAUDE.md             # AI assistant guidance
 ├── README.md             # This file
 ├── pyproject.toml        # Tool configuration
@@ -112,70 +121,20 @@ spotifyPlaylistBackups/
 
 ## Development
 
-### Setup Development Environment
-
 ```bash
 # Install dev dependencies
 pip install -r requirements-dev.txt
 
 # Install pre-commit hooks
 pre-commit install
-```
 
-### Running Tests
-
-```bash
-# Run all tests
+# Run tests
 pytest
 
-# Run with coverage
-pytest --cov=src --cov-report=term-missing
+# Run pre-commit checks
+pre-commit run --all-files
 ```
-
-### Code Quality
-
-This project uses:
-- **Black** for code formatting
-- **isort** for import sorting
-- **flake8** for linting
-- **mypy** for type checking
-- **bandit** for security scanning
-- **pip-audit** for dependency vulnerability checking
-
-All checks run automatically via pre-commit hooks and CI.
-
-## CI/CD
-
-GitHub Actions runs the following checks on every push and PR:
-
-1. **Lint**: Black, isort, flake8, mypy
-2. **Test**: pytest across Python 3.10, 3.11, 3.12
-3. **Coverage**: 95% minimum coverage
-4. **Security**: bandit and pip-audit
-
-See [docs/CI.md](docs/CI.md) for details.
-
-## Documentation
-
-- [Documentation Index](docs/INDEX.md) - All documentation
-- [Setup Guide](docs/SETUP.md) - Installation and configuration
-- [CI Documentation](docs/CI.md) - CI/CD pipeline details
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests and linting
-5. Commit your changes (`git commit -m 'feat: add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
 
 ## License
 
-[Choose your license]
-
-## Acknowledgments
-
-- [Acknowledgment 1]
-- [Acknowledgment 2]
+License not specified yet.
