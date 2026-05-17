@@ -1,3 +1,19 @@
+[project]
+name = "spotifyPlaylistBackups"
+version = "0.1.0"
+description = "Backup and export Spotify playlists to JSON"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "dropbox>=11.36.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.1",
+    "PyYAML>=6.0",
+    "python-dotenv>=1.0.0",
+    "spotipy>=2.23.0",
+    "typer[all]>=0.12.3",
+]
+
 [tool.black]
 line-length = 127
 target-version = ['py310', 'py311', 'py312']
@@ -32,10 +48,11 @@ addopts = [
 
 [tool.mypy]
 python_version = "3.10"
-warn_return_any = true
+strict = true
 warn_unused_configs = true
-disallow_untyped_defs = false
 ignore_missing_imports = true
+explicit_package_bases = true
+files = ["src"]
 exclude = [
     'venv',
     '.venv',

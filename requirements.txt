@@ -1,8 +1,8 @@
 # Core dependencies
+dropbox>=11.36.0
+pydantic>=2.7.0
+pydantic-settings>=2.3.1
 PyYAML>=6.0
 python-dotenv>=1.0.0
-
-# Add your project dependencies below
-# Example:
-# requests>=2.31.0
-# numpy>=1.21.0
+spotipy>=2.23.0
+typer[all]>=0.12.3

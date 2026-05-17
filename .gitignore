@@ -1,5 +1,16 @@
 # Config files with sensitive data
-config/config.yaml
+config/*.yaml
+!config/config.example.yaml
+config/*.json
+
+# Environment files
+.env
+.env.*
+
+# Token caches (e.g., spotipy)
+.cache
+.cache-*
+.spotify_token.json
 
 # Personal notes
 notes/
