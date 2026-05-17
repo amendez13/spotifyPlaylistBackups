@@ -5,7 +5,7 @@ description = "Backup and export Spotify playlists to JSON"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "dropbox>=11.36.0",
+    "dropbox>=12.0.2",
     "pydantic>=2.7.0",
     "pydantic-settings>=2.3.1",
     "PyYAML>=6.0",
