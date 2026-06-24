@@ -1,7 +1,7 @@
 # spotifyPlaylistBackups
 
 ![CI](https://github.com/amendez13/spotifyPlaylistBackups/workflows/CI/badge.svg)
-![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+![Python](https://img.shields.io/badge/python-3.12+-blue.svg)
 ![Coverage](https://img.shields.io/badge/coverage-95%25-green.svg)
 
 Backup and sync Spotify playlists to CSV files in Dropbox.
@@ -20,7 +20,7 @@ Backup and sync Spotify playlists to CSV files in Dropbox.
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 or higher
 - pip (Python package installer)
 
 ### Installation
